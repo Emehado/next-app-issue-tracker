@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const links = [
@@ -7,6 +9,9 @@ const links = [
 ];
 
 const NavBar = () => {
+  const curPath = usePathname();
+  console.log("🚀 ~ file: NavBar.tsx:12 ~ NavBar ~ curPath:", curPath);
+
   return (
     <nav className="navbar bg-base-100">
       <div className="flex-1">
