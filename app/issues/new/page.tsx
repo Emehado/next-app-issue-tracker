@@ -1,20 +1,27 @@
 "use client";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import { useForm, Controller, set } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createIssueSchema } from "@/app/validationSchemas";
+import { z } from "zod";
 
-interface IssueForm {
-  title: string;
-  description: string;
-}
+type IssueForm = z.infer<typeof createIssueSchema>;
 
 const NewIssue = () => {
   const [error, setError] = useState("");
   const router = useRouter();
-  const { register, control, handleSubmit } = useForm<IssueForm>();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
+    resolver: zodResolver(createIssueSchema),
+  });
   return (
     <section>
       {error && (
@@ -52,6 +59,9 @@ const NewIssue = () => {
             placeholder="Title"
             className="input input-bordered w-full max-w-md"
           />
+          {errors.title && (
+            <p className="text-error mt-2">{errors.title.message}</p>
+          )}
         </div>
         <div className="mb-4">
           <Controller
@@ -61,6 +71,9 @@ const NewIssue = () => {
               <SimpleMDE className="w-full max-w-md" {...field} />
             )}
           />
+          {errors.description && (
+            <p className="text-error mt-2">{errors.description.message}</p>
+          )}
         </div>
         <div className="max-w-sm">
           <button className="btn btn-primary" type="submit">
