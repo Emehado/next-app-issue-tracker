@@ -8,8 +8,10 @@ interface User {
 
 export default async function Home() {
   return (
-    <main>
-      <h1>Hello world</h1>
+    <main className="container">
+      <Link href="/issues">
+        <button className="btn btn-ghost">All Issues</button>
+      </Link>
     </main>
   );
 }
