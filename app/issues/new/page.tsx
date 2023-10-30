@@ -19,9 +19,18 @@ const NewIssue = () => {
     register,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<IssueForm>({
     resolver: zodResolver(createIssueSchema),
+  });
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      setError("An unexpected error occurred");
+    }
   });
   return (
     <section>
@@ -43,16 +52,7 @@ const NewIssue = () => {
           <span>{error}</span>
         </div>
       )}
-      <form
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            await axios.post("/api/issues", data);
-            router.push("/issues");
-          } catch (error) {
-            setError("An unexpected error occurred");
-          }
-        })}
-      >
+      <form onSubmit={onSubmit}>
         <div className="mb-4">
           <input
             {...register("title")}
@@ -75,8 +75,16 @@ const NewIssue = () => {
           <ErrorMessage>{errors.description?.message}</ErrorMessage>
         </div>
         <div className="max-w-sm">
-          <button className="btn btn-primary" type="submit">
-            Add Issue
+          <button
+            className="btn btn-primary"
+            disabled={isSubmitting}
+            type="submit"
+          >
+            {isSubmitting ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              "Add Issue"
+            )}
           </button>
         </div>
       </form>
